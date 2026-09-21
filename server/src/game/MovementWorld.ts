@@ -39,8 +39,9 @@ export class MovementWorld {
     if (!Number.isFinite(seconds) || seconds <= 0) return;
     for (const [id, input] of this.inputs) {
       const player = this.state.players.get(id)!;
-      player.x = this.contain(player.x + input.x * MOVE_SPEED * seconds);
-      player.y = this.contain(player.y + input.y * MOVE_SPEED * seconds);
+      const scale = input.x !== 0 && input.y !== 0 ? Math.SQRT1_2 : 1;
+      player.x = this.contain(player.x + input.x * scale * MOVE_SPEED * seconds);
+      player.y = this.contain(player.y + input.y * scale * MOVE_SPEED * seconds);
     }
   }
 

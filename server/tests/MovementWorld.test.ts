@@ -19,7 +19,7 @@ test("players join near each other with four colors and leave cleanly", () => {
   assert.equal(world.state.players.has("0"), false);
 });
 
-test("eight directions keep full speed on each axis", () => {
+test("eight directions keep the same speed", () => {
   for (const x of [-1, 0, 1]) for (const y of [-1, 0, 1]) {
     const world = new MovementWorld();
     world.join("a");
@@ -27,8 +27,9 @@ test("eight directions keep full speed on each axis", () => {
     const start = { x: p.x, y: p.y };
     world.move("a", { x, y });
     world.step(0.5);
-    assert.equal(p.x - start.x, x * MOVE_SPEED * 0.5);
-    assert.equal(p.y - start.y, y * MOVE_SPEED * 0.5);
+    const scale = x !== 0 && y !== 0 ? Math.SQRT1_2 : 1;
+    assert.equal(p.x - start.x, x * scale * MOVE_SPEED * 0.5);
+    assert.equal(p.y - start.y, y * scale * MOVE_SPEED * 0.5);
     world.move("a", { x: 0, y: 0 });
     const stopped = { x: p.x, y: p.y };
     world.step(1);
