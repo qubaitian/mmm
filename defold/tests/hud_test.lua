@@ -1,4 +1,5 @@
 hash = function(value) return value end
+package.path = './?.lua;' .. package.path
 local marker = { visible = false, enabled = true }
 gui = {
   get_node = function(name) assert(name == 'you'); return marker end,

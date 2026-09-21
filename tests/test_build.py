@@ -58,8 +58,46 @@ sys.exit(int(os.environ.get("BUILD_TEST_EXIT", "0")))
     def test_unknown_target_does_not_start_a_build(self):
         result = self.run_build("unknown")
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("web|desktop", result.stderr)
+        self.assertIn("web|desktop|android", result.stderr)
         self.assertFalse(self.log.exists())
+
+    def test_android_build_makes_an_apk(self):
+        self.env["SKIP_VERSION_BUMP"] = "1"
+        android_dir = ROOT / "dist/android"
+        android_dir.mkdir(parents=True, exist_ok=True)
+        dummy = android_dir / "mmm.apk"
+        web_dir = ROOT / "dist/web/mmm"
+        web_apk = web_dir / "mmm.apk"
+        versioned = web_dir / "mmm-1.0.0.apk"
+        previous = dummy.read_bytes() if dummy.exists() else None
+        web_previous = web_apk.read_bytes() if web_apk.exists() else None
+        versioned_previous = versioned.read_bytes() if versioned.exists() else None
+        dummy.write_bytes(b"placeholder")
+        def restore():
+            if previous is None:
+                dummy.unlink(missing_ok=True)
+            else:
+                dummy.write_bytes(previous)
+            if web_previous is None:
+                web_apk.unlink(missing_ok=True)
+            else:
+                web_apk.parent.mkdir(parents=True, exist_ok=True)
+                web_apk.write_bytes(web_previous)
+            if versioned_previous is None:
+                versioned.unlink(missing_ok=True)
+            else:
+                versioned.write_bytes(versioned_previous)
+        self.addCleanup(restore)
+        result = self.run_build("android")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        args = json.loads(self.log.read_text())
+        self.assertEqual(args[args.index("--platform") + 1], "armv7-android")
+        self.assertEqual(args[args.index("--architectures") + 1], "armv7-android,arm64-android")
+        self.assertEqual(args[args.index("--bundle-format") + 1], "apk")
+        self.assertEqual(args[args.index("--bundle-output") + 1], str(ROOT / "dist/android"))
+        self.assertEqual(args[-3:], ["resolve", "build", "bundle"])
+        self.assertEqual(web_apk.read_bytes(), b"placeholder")
+        self.assertEqual(versioned.read_bytes(), b"placeholder")
 
 
 if __name__ == "__main__":

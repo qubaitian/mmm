@@ -1,9 +1,10 @@
 import { defineRoom, defineServer } from "colyseus";
 import { MovementRoom } from "./rooms/MovementRoom";
+import { listenAddress } from "./listen_config";
 
-const port = Number(process.env.PORT || 2567);
+const { host, port } = listenAddress();
 const server = defineServer({ rooms: { movement: defineRoom(MovementRoom) } });
 
-server.listen(port).then(() => {
-  console.log(`mmm server listens on port ${port}`);
+server.listen(port, host).then(() => {
+  console.log(`mmm server listens on ${host}:${port}`);
 });

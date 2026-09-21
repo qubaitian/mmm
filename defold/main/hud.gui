@@ -3,51 +3,164 @@ fonts {
   name: "default"
   font: "/builtins/fonts/default.font"
 }
+textures {
+  name: "ui"
+  texture: "/gfx/ui.atlas"
+}
+adjust_reference: ADJUST_REFERENCE_DISABLED
 nodes {
   type: TYPE_TEXT
   id: "status"
-  position { x: 24.0 y: 608.0 }
-  size { x: 600.0 y: 30.0 }
+  position { x: 24.0 y: 1252.0 }
+  size { x: 400.0 y: 30.0 }
   text: "Connecting..."
   font: "default"
   pivot: PIVOT_W
-  visible: true
   outline { w: 1.0 }
   shadow { w: 1.0 }
 }
 nodes {
   type: TYPE_TEXT
   id: "players"
-  position { x: 936.0 y: 608.0 }
-  size { x: 600.0 y: 30.0 }
+  position { x: 696.0 y: 1252.0 }
+  size { x: 400.0 y: 30.0 }
   text: "Online: 0 / 12"
   font: "default"
   pivot: PIVOT_E
-  visible: true
-  outline { w: 1.0 }
-  shadow { w: 1.0 }
-}
-nodes {
-  type: TYPE_TEXT
-  id: "controls"
-  position { x: 480.0 y: 28.0 }
-  size { x: 600.0 y: 30.0 }
-  text: "WASD / Arrow keys to move"
-  font: "default"
-  pivot: PIVOT_CENTER
-  visible: true
   outline { w: 1.0 }
   shadow { w: 1.0 }
 }
 nodes {
   type: TYPE_TEXT
   id: "you"
-  position { x: 480.0 y: 362.0 }
-  size { x: 600.0 y: 30.0 }
+  position { x: 360.0 y: 920.0 }
+  size { x: 200.0 y: 30.0 }
   text: "YOU"
   font: "default"
   pivot: PIVOT_CENTER
   visible: false
   outline { w: 1.0 }
   shadow { w: 1.0 }
+}
+nodes {
+  type: TYPE_BOX
+  id: "stick_root"
+  position { x: 140.0 y: 180.0 }
+  size { x: 0.0 y: 0.0 }
+  pivot: PIVOT_CENTER
+  inherit_alpha: true
+}
+nodes {
+  type: TYPE_BOX
+  id: "stick_base"
+  parent: "stick_root"
+  position { x: 0.0 y: 0.0 }
+  size { x: 176.0 y: 176.0 }
+  texture: "ui/generic_stick"
+  pivot: PIVOT_CENTER
+  inherit_alpha: true
+  size_mode: SIZE_MODE_MANUAL
+}
+nodes {
+  type: TYPE_BOX
+  id: "stick_nub"
+  parent: "stick_root"
+  position { x: 0.0 y: 0.0 }
+  size { x: 80.0 y: 80.0 }
+  texture: "ui/generic_button_circle_fill"
+  pivot: PIVOT_CENTER
+  inherit_alpha: true
+  size_mode: SIZE_MODE_MANUAL
+}
+nodes {
+  type: TYPE_BOX
+  id: "wasd_root"
+  position { x: 140.0 y: 180.0 }
+  size { x: 0.0 y: 0.0 }
+  pivot: PIVOT_CENTER
+  inherit_alpha: true
+}
+nodes {
+  type: TYPE_BOX
+  id: "key_w"
+  parent: "wasd_root"
+  position { x: 0.0 y: 76.0 }
+  size { x: 72.0 y: 72.0 }
+  texture: "ui/keyboard_w"
+  pivot: PIVOT_CENTER
+  inherit_alpha: true
+  size_mode: SIZE_MODE_MANUAL
+}
+nodes {
+  type: TYPE_BOX
+  id: "key_a"
+  parent: "wasd_root"
+  position { x: -76.0 y: 0.0 }
+  size { x: 72.0 y: 72.0 }
+  texture: "ui/keyboard_a"
+  pivot: PIVOT_CENTER
+  inherit_alpha: true
+  size_mode: SIZE_MODE_MANUAL
+}
+nodes {
+  type: TYPE_BOX
+  id: "key_s"
+  parent: "wasd_root"
+  position { x: 0.0 y: 0.0 }
+  size { x: 72.0 y: 72.0 }
+  texture: "ui/keyboard_s"
+  pivot: PIVOT_CENTER
+  inherit_alpha: true
+  size_mode: SIZE_MODE_MANUAL
+}
+nodes {
+  type: TYPE_BOX
+  id: "key_d"
+  parent: "wasd_root"
+  position { x: 76.0 y: 0.0 }
+  size { x: 72.0 y: 72.0 }
+  texture: "ui/keyboard_d"
+  pivot: PIVOT_CENTER
+  inherit_alpha: true
+  size_mode: SIZE_MODE_MANUAL
+}
+nodes {
+  type: TYPE_BOX
+  id: "skill_1"
+  position { x: 532.0 y: 248.0 }
+  size { x: 88.0 y: 88.0 }
+  texture: "ui/generic_button_circle"
+  pivot: PIVOT_CENTER
+  inherit_alpha: true
+  size_mode: SIZE_MODE_MANUAL
+}
+nodes {
+  type: TYPE_BOX
+  id: "skill_2"
+  position { x: 636.0 y: 248.0 }
+  size { x: 88.0 y: 88.0 }
+  texture: "ui/generic_button_circle"
+  pivot: PIVOT_CENTER
+  inherit_alpha: true
+  size_mode: SIZE_MODE_MANUAL
+}
+nodes {
+  type: TYPE_BOX
+  id: "skill_3"
+  position { x: 532.0 y: 152.0 }
+  size { x: 88.0 y: 88.0 }
+  texture: "ui/generic_button_circle"
+  pivot: PIVOT_CENTER
+  inherit_alpha: true
+  size_mode: SIZE_MODE_MANUAL
+}
+nodes {
+  type: TYPE_BOX
+  id: "skill_4"
+  position { x: 636.0 y: 152.0 }
+  size { x: 88.0 y: 88.0 }
+  texture: "ui/generic_button_circle"
+  pivot: PIVOT_CENTER
+  inherit_alpha: true
+  size_mode: SIZE_MODE_MANUAL
 }

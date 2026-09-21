@@ -7,3 +7,7 @@ build/Release
 node_modules
 .DS_Store
 dist
+__pycache__/
+/Generic/
+/Keyboard & Mouse/
+/ui-pack/

@@ -1,3 +1,90 @@
+local Platform = require 'main.platform'
+local Joystick = require 'main.joystick'
+local Layout = require 'main.layout'
+local Hud = require 'main.hud'
+
+local TOUCH = hash('touch')
+local STICK_X = 140
+local STICK_Y = 180
+local POINTER = 1
+
+local function design_point(action)
+	local width, height = window.get_size()
+	local layout = Layout.from_window(width, height)
+	local x = action.screen_x or action.x
+	local y = action.screen_y or action.y
+	return Layout.to_design(layout, x, y)
+end
+
+local function show_move(self)
+	local nodes = Hud.move_nodes(self.move)
+	gui.set_enabled(gui.get_node('stick_root'), nodes.stick)
+	gui.set_enabled(gui.get_node('wasd_root'), nodes.wasd)
+end
+
+local function place_stick(self)
+	gui.set_position(gui.get_node('stick_root'), vmath.vector3(self.joystick.cx, self.joystick.cy, 0))
+	gui.set_position(gui.get_node('stick_nub'), vmath.vector3(self.joystick.nub_x - self.joystick.cx, self.joystick.nub_y - self.joystick.cy, 0))
+end
+
+local function send_stick(self)
+	local x, y = self.joystick:vector()
+	msg.post('game#script', 'stick', { x = x, y = y })
+end
+
+local function set_skill(self, index, pressed)
+	gui.play_flipbook(gui.get_node('skill_' .. index), Hud.skill_animation(pressed))
+end
+
+local function reset_keys()
+	for _, letter in ipairs({ 'w', 'a', 's', 'd' }) do
+		gui.play_flipbook(gui.get_node('key_' .. letter), Hud.key_animation(letter, false))
+	end
+end
+
+function init(self)
+	msg.post('.', 'acquire_input_focus')
+	self.move = Platform.move_control(sys.get_sys_info().system_name)
+	self.joystick = Joystick.new(STICK_X, STICK_Y, 90, 0.2)
+	self.skill = nil
+	show_move(self)
+end
+
+function on_input(self, action_id, action)
+	if action_id ~= TOUCH then
+		return
+	end
+	local x, y = design_point(action)
+	if action.pressed then
+		for index = 1, 4 do
+			if gui.pick_node(gui.get_node('skill_' .. index), x, y) then
+				self.skill = index
+				set_skill(self, index, true)
+				return
+			end
+		end
+		if self.move == 'stick' and Hud.in_move_zone(x, y) and self.joystick:press(POINTER, x, y) then
+			place_stick(self)
+			send_stick(self)
+			return
+		end
+	elseif action.released then
+		if self.move == 'stick' then
+			self.joystick:release(POINTER)
+			place_stick(self)
+			send_stick(self)
+		end
+		if self.skill then
+			set_skill(self, self.skill, false)
+			self.skill = nil
+		end
+	elseif self.move == 'stick' and self.joystick.id then
+		self.joystick:move(POINTER, x, y)
+		place_stick(self)
+		send_stick(self)
+	end
+end
+
 function on_message(self, message_id, message)
 	if message_id == hash('status') then
 		gui.set_text(gui.get_node('status'), message.text)
@@ -5,5 +92,13 @@ function on_message(self, message_id, message)
 		gui.set_text(gui.get_node('players'), 'Online: ' .. message.count .. ' / 12')
 	elseif message_id == hash('local_player') then
 		gui.set_visible(gui.get_node('you'), message.visible)
+	elseif message_id == hash('key') then
+		local node = Hud.key_node(message.name)
+		local letter = node and Hud.letter_for_node(node)
+		if letter then
+			gui.play_flipbook(gui.get_node(node), Hud.key_animation(letter, message.pressed))
+		end
+	elseif message_id == hash('keys_clear') then
+		reset_keys()
 	end
 end

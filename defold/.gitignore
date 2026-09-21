@@ -1,2 +1,4 @@
 build/
 .internal/
+debug.keystore
+debug.keystore.pass.txt

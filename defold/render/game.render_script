@@ -1,0 +1,72 @@
+local Layout = require 'main.layout'
+
+local function make_clear()
+	return {
+		[graphics.BUFFER_TYPE_COLOR0_BIT] = vmath.vector4(
+			sys.get_config_number('render.clear_color_red', 0.08),
+			sys.get_config_number('render.clear_color_green', 0.10),
+			sys.get_config_number('render.clear_color_blue', 0.12),
+			1
+		),
+		[graphics.BUFFER_TYPE_DEPTH_BIT] = 1,
+		[graphics.BUFFER_TYPE_STENCIL_BIT] = 0,
+	}
+end
+
+function init(self)
+	self.tile = render.predicate({ 'tile' })
+	self.gui = render.predicate({ 'gui' })
+	self.particle = render.predicate({ 'particle' })
+	self.debug_text = render.predicate({ 'debug_text' })
+	self.clear = make_clear()
+end
+
+local function draw_world(self, layout)
+	local half = Layout.world_half()
+	render.set_viewport(layout.battle_x, layout.battle_y, layout.battle_size, layout.battle_size)
+	local cameras = camera.get_cameras()
+	local bound = false
+	if cameras then
+		for i = #cameras, 1, -1 do
+			if camera.get_enabled(cameras[i]) then
+				render.set_view(camera.get_view(cameras[i]))
+				bound = true
+				break
+			end
+		end
+	end
+	if not bound then
+		render.set_view(vmath.matrix4())
+	end
+	render.set_projection(vmath.matrix4_orthographic(-half, half, -half, half, -1, 1))
+	render.set_blend_func(graphics.BLEND_FACTOR_SRC_ALPHA, graphics.BLEND_FACTOR_ONE_MINUS_SRC_ALPHA)
+	render.enable_state(graphics.STATE_BLEND)
+	render.draw(self.tile)
+	render.draw(self.particle)
+end
+
+local function draw_hud(self, layout)
+	render.set_viewport(layout.fit_x, layout.fit_y, layout.fit_w, layout.fit_h)
+	render.set_view(vmath.matrix4())
+	render.set_projection(vmath.matrix4_orthographic(0, Layout.DESIGN_WIDTH, 0, Layout.DESIGN_HEIGHT, -1, 1))
+	render.enable_state(graphics.STATE_STENCIL_TEST)
+	render.draw(self.gui)
+	render.draw(self.debug_text)
+	render.disable_state(graphics.STATE_STENCIL_TEST)
+end
+
+function update(self)
+	local width = render.get_window_width()
+	local height = render.get_window_height()
+	if width == 0 or height == 0 then
+		return
+	end
+	local layout = Layout.from_window(width, height)
+	render.set_depth_mask(true)
+	render.set_stencil_mask(0xff)
+	render.clear(self.clear)
+	draw_world(self, layout)
+	render.disable_state(graphics.STATE_DEPTH_TEST)
+	draw_hud(self, layout)
+	render.disable_state(graphics.STATE_BLEND)
+end

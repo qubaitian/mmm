@@ -1,0 +1,35 @@
+images {
+  image: "/gfx/ui/generic_stick.png"
+}
+images {
+  image: "/gfx/ui/generic_button_circle.png"
+}
+images {
+  image: "/gfx/ui/generic_button_circle_fill.png"
+}
+images {
+  image: "/gfx/ui/keyboard_w.png"
+}
+images {
+  image: "/gfx/ui/keyboard_a.png"
+}
+images {
+  image: "/gfx/ui/keyboard_s.png"
+}
+images {
+  image: "/gfx/ui/keyboard_d.png"
+}
+images {
+  image: "/gfx/ui/keyboard_w_outline.png"
+}
+images {
+  image: "/gfx/ui/keyboard_a_outline.png"
+}
+images {
+  image: "/gfx/ui/keyboard_s_outline.png"
+}
+images {
+  image: "/gfx/ui/keyboard_d_outline.png"
+}
+margin: 1
+extrude_borders: 2

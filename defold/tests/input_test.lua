@@ -25,4 +25,14 @@ for _, up in ipairs({-1, 0, 1}) do
     expect(right, up)
   end
 end
+input:clear()
+expect(0, 0)
+input:set_stick(1, 0)
+expect(1, 0)
+input:set_stick(0.4, -0.9)
+expect(1, -1)
+input:set('left', true)
+expect(-1, -1)
+input:clear()
+expect(0, 0)
 print('Input tests pass')

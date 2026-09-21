@@ -30,3 +30,7 @@ key_trigger {
   input: KEY_RIGHT
   action: "arrow_right"
 }
+mouse_trigger {
+  input: MOUSE_BUTTON_LEFT
+  action: "touch"
+}
