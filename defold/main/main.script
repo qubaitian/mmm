@@ -1,6 +1,7 @@
 local Colyseus = require 'colyseus.sdk'
 local Input = require 'main.player_input'
 local Arena = require 'main.arena'
+local CombatView = require 'main.combat_view'
 
 local CHARACTERS = { [0] = 'green_character', 'red_character', 'yellow_character', 'purple_character' }
 local ACTIONS = {}
@@ -34,8 +35,12 @@ local function update_count(self)
 end
 
 local function clear_players(self)
-	for _, player in pairs(self.players) do go.delete(player.id) end
+	for _, player in pairs(self.players) do
+		CombatView.delete(player.combat)
+		go.delete(player.id)
+	end
 	self.players = {}
+	if self.dummy then go.delete(self.dummy.id); self.dummy = nil end
 	msg.post('hud#gui', 'local_player', { visible = false })
 	update_count(self)
 end
@@ -47,9 +52,10 @@ local function bind_room(self, room)
 			Arena.build(room.state.tiles, room.state.tileSize)
 			self.arena_ready = true
 		end
+		if not self.dummy then self.dummy = CombatView.dummy(room.state.dummy) end
 		local id = factory.create('#character_factory', vmath.vector3(player.x, player.y, 0))
 		sprite.play_flipbook(msg.url(nil, id, 'sprite'), CHARACTERS[player.color] or CHARACTERS[0])
-		self.players[key] = { id = id, x = player.x, y = player.y }
+		self.players[key] = { id = id, x = player.x, y = player.y, state = player, combat = CombatView.new(player.color) }
 		callbacks:listen(player, 'x', function(value)
 			if self.players[key] then self.players[key].x = value end
 		end)
@@ -64,9 +70,21 @@ local function bind_room(self, room)
 	end)
 	callbacks:on_remove('players', function(_, key)
 		local player = self.players[key]
-		if player then go.delete(player.id) end
+		if player then
+			CombatView.delete(player.combat)
+			go.delete(player.id)
+		end
 		self.players[key] = nil
 		update_count(self)
+	end)
+	room:on_message('attack', function(attack)
+		local player = self.players[attack.playerId]
+		if not player or not self.dummy then return end
+		if not CombatView.attack(player.combat, attack, room.state.dummy.radius) then return end
+		CombatView.flash(self.dummy)
+		if attack.playerId == room.session_id then
+			msg.post('hud#gui', 'attack', { sequence = attack.sequence, skill = attack.skill, refreshed = attack.refreshed })
+		end
 	end)
 	room:on('leave', function()
 		self.room = nil
@@ -123,15 +141,24 @@ function update(self, dt)
 	if not self.room then return end
 	send_input(self)
 	local blend = 1 - math.exp(-20 * dt)
+	local dummy = self.room.state.dummy
 	for _, player in pairs(self.players) do
 		local position = go.get_position(player.id)
 		position.x = position.x + (player.x - position.x) * blend
 		position.y = position.y + (player.y - position.y) * blend
 		go.set_position(position, player.id)
+		CombatView.update(player.combat, dt, position.x, position.y, dummy.x, dummy.y)
 	end
+	if self.dummy then CombatView.update_dummy(self.dummy, dt) end
 	local player = self.players[self.room.session_id]
 	if player then
 		go.set_position(go.get_position(player.id), 'camera')
+		msg.post('hud#gui', 'combat_state', {
+			charges = player.state.charges,
+			rechargeRemaining = player.state.rechargeRemaining,
+			releaseRemaining = player.state.releaseRemaining,
+			mortalRemaining = player.state.mortalRemaining,
+		})
 	end
 end
 

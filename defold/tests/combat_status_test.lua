@@ -1,0 +1,18 @@
+package.path = './?.lua;' .. package.path
+local Status = require 'main.combat_status'
+local status = Status.new()
+assert(status:receive({ sequence = 1, skill = 'mortal_strike', refreshed = true }))
+assert(not status:receive({ sequence = 1, skill = 'mortal_strike', refreshed = true }))
+assert(not status:receive({ sequence = 0, skill = 'overpower' }))
+local view = status:update(0, { charges = 1, rechargeRemaining = 2.25, mortalRemaining = 4.5 })
+assert(view.charges == 1 and view.progress == 0.5)
+assert(view.mortal_progress == 0 and view.mortal_remaining == 4.5)
+assert(view.mortal_flash > 0 and view.overpower_flash == 0 and view.refresh_flash > 0)
+view = status:update(1, { charges = 2, rechargeRemaining = 0, mortalRemaining = 0 })
+assert(view.progress == 1 and view.mortal_flash == 0 and view.refresh_flash == 0)
+assert(view.mortal_progress == 1 and view.mortal_remaining == 0)
+view = status:update(0, { charges = 0, rechargeRemaining = 3, mortalRemaining = 2.25 })
+assert(view.mortal_progress == 0.5 and view.mortal_remaining == 2.25)
+assert(status:receive({ sequence = 2, skill = 'overpower', refreshed = false }))
+assert(status:update(0, {}).overpower_flash > 0)
+print('Combat status tests pass')

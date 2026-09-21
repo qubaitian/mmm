@@ -124,43 +124,7 @@ nodes {
   inherit_alpha: true
   size_mode: SIZE_MODE_MANUAL
 }
-nodes {
-  type: TYPE_BOX
-  id: "skill_1"
-  position { x: 532.0 y: 248.0 }
-  size { x: 88.0 y: 88.0 }
-  texture: "ui/generic_button_circle"
-  pivot: PIVOT_CENTER
-  inherit_alpha: true
-  size_mode: SIZE_MODE_MANUAL
-}
-nodes {
-  type: TYPE_BOX
-  id: "skill_2"
-  position { x: 636.0 y: 248.0 }
-  size { x: 88.0 y: 88.0 }
-  texture: "ui/generic_button_circle"
-  pivot: PIVOT_CENTER
-  inherit_alpha: true
-  size_mode: SIZE_MODE_MANUAL
-}
-nodes {
-  type: TYPE_BOX
-  id: "skill_3"
-  position { x: 532.0 y: 152.0 }
-  size { x: 88.0 y: 88.0 }
-  texture: "ui/generic_button_circle"
-  pivot: PIVOT_CENTER
-  inherit_alpha: true
-  size_mode: SIZE_MODE_MANUAL
-}
-nodes {
-  type: TYPE_BOX
-  id: "skill_4"
-  position { x: 636.0 y: 152.0 }
-  size { x: 88.0 y: 88.0 }
-  texture: "ui/generic_button_circle"
-  pivot: PIVOT_CENTER
-  inherit_alpha: true
-  size_mode: SIZE_MODE_MANUAL
+fonts {
+  name: "combat"
+  font: "/gfx/fonts/combat.font"
 }

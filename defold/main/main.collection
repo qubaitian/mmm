@@ -1,7 +1,7 @@
 name: "main"
 embedded_instances {
   id: "game"
-  data: "components {\n  id: \"script\"\n  component: \"/main/main.script\"\n}\nembedded_components {\n  id: \"character_factory\"\n  type: \"factory\"\n  data: \"prototype: \\\"/main/character.go\\\"\\n\"\n}\nembedded_components {\n  id: \"tile_factory\"\n  type: \"factory\"\n  data: \"prototype: \\\"/main/tile.go\\\"\\n\"\n}\n"
+  data: "components {\n  id: \"script\"\n  component: \"/main/main.script\"\n}\nembedded_components {\n  id: \"character_factory\"\n  type: \"factory\"\n  data: \"prototype: \\\"/main/character.go\\\"\\n\"\n}\nembedded_components {\n  id: \"tile_factory\"\n  type: \"factory\"\n  data: \"prototype: \\\"/main/tile.go\\\"\\n\"\n}\nembedded_components {\n  id: \"combat_factory\"\n  type: \"factory\"\n  data: \"prototype: \\\"/main/combat_piece.go\\\"\\n\"\n}\n"
 }
 embedded_instances {
   id: "camera"

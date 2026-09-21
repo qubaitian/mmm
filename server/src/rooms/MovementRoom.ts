@@ -8,7 +8,11 @@ export class MovementRoom extends Room {
 
   onCreate() {
     this.onMessage("move", (client, data: unknown) => this.world.move(client.sessionId, data));
-    this.setSimulationInterval((delta) => this.world.step(delta / 1000), 1000 / 30);
+    this.setSimulationInterval((delta) => {
+      for (const attack of this.world.step(delta / 1000)) {
+        this.broadcast("attack", attack, { afterNextPatch: true });
+      }
+    }, 1000 / 30);
     this.setPatchRate(1000 / 30);
   }
 

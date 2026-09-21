@@ -2,6 +2,7 @@ local Platform = require 'main.platform'
 local Joystick = require 'main.joystick'
 local Layout = require 'main.layout'
 local Hud = require 'main.hud'
+local CombatHud = require 'main.combat_hud'
 
 local TOUCH = hash('touch')
 local STICK_X = 140
@@ -32,10 +33,6 @@ local function send_stick(self)
 	msg.post('game#script', 'stick', { x = x, y = y })
 end
 
-local function set_skill(self, index, pressed)
-	gui.play_flipbook(gui.get_node('skill_' .. index), Hud.skill_animation(pressed))
-end
-
 local function reset_keys()
 	for _, letter in ipairs({ 'w', 'a', 's', 'd' }) do
 		gui.play_flipbook(gui.get_node('key_' .. letter), Hud.key_animation(letter, false))
@@ -46,8 +43,12 @@ function init(self)
 	msg.post('.', 'acquire_input_focus')
 	self.move = Platform.move_control(sys.get_sys_info().system_name)
 	self.joystick = Joystick.new(STICK_X, STICK_Y, 90, 0.2)
-	self.skill = nil
+	self.combat = CombatHud.new()
 	show_move(self)
+end
+
+function update(self, dt)
+	CombatHud.update(self.combat, dt)
 end
 
 function on_input(self, action_id, action)
@@ -56,13 +57,6 @@ function on_input(self, action_id, action)
 	end
 	local x, y = design_point(action)
 	if action.pressed then
-		for index = 1, 4 do
-			if gui.pick_node(gui.get_node('skill_' .. index), x, y) then
-				self.skill = index
-				set_skill(self, index, true)
-				return
-			end
-		end
 		if self.move == 'stick' and Hud.in_move_zone(x, y) and self.joystick:press(POINTER, x, y) then
 			place_stick(self)
 			send_stick(self)
@@ -73,10 +67,6 @@ function on_input(self, action_id, action)
 			self.joystick:release(POINTER)
 			place_stick(self)
 			send_stick(self)
-		end
-		if self.skill then
-			set_skill(self, self.skill, false)
-			self.skill = nil
 		end
 	elseif self.move == 'stick' and self.joystick.id then
 		self.joystick:move(POINTER, x, y)
@@ -92,6 +82,11 @@ function on_message(self, message_id, message)
 		gui.set_text(gui.get_node('players'), 'Online: ' .. message.count .. ' / 12')
 	elseif message_id == hash('local_player') then
 		gui.set_visible(gui.get_node('you'), message.visible)
+		if self.combat then CombatHud.set_active(self.combat, message.visible) end
+	elseif message_id == hash('combat_state') then
+		self.combat.state = message
+	elseif message_id == hash('attack') then
+		CombatHud.attack(self.combat, message)
 	elseif message_id == hash('key') then
 		local node = Hud.key_node(message.name)
 		local letter = node and Hud.letter_for_node(node)

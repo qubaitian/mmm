@@ -21,3 +21,18 @@ images {
 }
 margin: 1
 extrude_borders: 2
+images {
+  image: "/gfx/characters/green_hand.png"
+}
+images {
+  image: "/gfx/characters/red_hand.png"
+}
+images {
+  image: "/gfx/characters/yellow_hand.png"
+}
+images {
+  image: "/gfx/characters/purple_hand.png"
+}
+images {
+  image: "/gfx/items/weapon_longsword.png"
+}
