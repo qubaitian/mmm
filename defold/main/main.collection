@@ -1,0 +1,13 @@
+name: "main"
+embedded_instances {
+  id: "game"
+  data: "components {\n  id: \"script\"\n  component: \"/main/main.script\"\n}\nembedded_components {\n  id: \"character_factory\"\n  type: \"factory\"\n  data: \"prototype: \\\"/main/character.go\\\"\\n\"\n}\nembedded_components {\n  id: \"tile_factory\"\n  type: \"factory\"\n  data: \"prototype: \\\"/main/tile.go\\\"\\n\"\n}\n"
+}
+embedded_instances {
+  id: "camera"
+  data: "embedded_components {\n  id: \"camera\"\n  type: \"camera\"\n  data: \"aspect_ratio: 1.0\\nfov: 0.7854\\nnear_z: -1.0\\nfar_z: 1.0\\northographic_projection: 1\\northographic_zoom: 1.0\\n\"\n}\n"
+}
+embedded_instances {
+  id: "hud"
+  data: "components {\n  id: \"gui\"\n  component: \"/main/hud.gui\"\n}\n"
+}

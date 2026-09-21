@@ -1,0 +1,9 @@
+function on_message(self, message_id, message)
+	if message_id == hash('status') then
+		gui.set_text(gui.get_node('status'), message.text)
+	elseif message_id == hash('players') then
+		gui.set_text(gui.get_node('players'), 'Online: ' .. message.count .. ' / 12')
+	elseif message_id == hash('local_player') then
+		gui.set_visible(gui.get_node('you'), message.visible)
+	end
+end

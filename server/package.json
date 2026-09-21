@@ -1,0 +1,21 @@
+{
+  "name": "mmm-server",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit -p tests/tsconfig.json",
+    "test": "npm run typecheck && tsx --test tests/*.test.ts"
+  },
+  "dependencies": {
+    "colyseus": "^0.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "@colyseus/sdk": "^0.17.0"
+  }
+}

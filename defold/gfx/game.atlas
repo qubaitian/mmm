@@ -1,0 +1,23 @@
+images {
+  image: "/gfx/environment/tile.png"
+}
+images {
+  image: "/gfx/environment/wall.png"
+}
+images {
+  image: "/gfx/environment/inner_diagonal.png"
+}
+images {
+  image: "/gfx/characters/green_character.png"
+}
+images {
+  image: "/gfx/characters/red_character.png"
+}
+images {
+  image: "/gfx/characters/yellow_character.png"
+}
+images {
+  image: "/gfx/characters/purple_character.png"
+}
+margin: 1
+extrude_borders: 2
