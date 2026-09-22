@@ -21,6 +21,7 @@ python3 -m http.server 8080 --bind 0.0.0.0 --directory dist/web/mmm
 ```
 
 Open the [web app](http://192.168.110.229:8080/).  
+Each `./build.sh` bumps the last number, like `1.0.0` to `1.0.1`.  
 
 ## Android
 
@@ -29,7 +30,6 @@ Open the [web app](http://192.168.110.229:8080/).
 ```
 
 The APK also copies to `dist/web/mmm/mmm-x.y.z.apk`.  
-Each Android build bumps the last number, like `1.0.0` to `1.0.1`.  
 The command prints the download URL.  
 
 ## macOS Desktop
@@ -43,4 +43,5 @@ open dist/desktop/mmm.app
 
 Tiles and characters come from [Kenney Scribble Dungeons](https://kenney.nl/assets/scribble-dungeons).  
 Input icons come from [Kenney Input Prompts](https://kenney.nl/assets/input-prompts).  
+Hit sound comes from [Kenney RPG Audio](https://kenney.nl/assets/rpg-audio).  
 License: [CC0](https://creativecommons.org/publicdomain/zero/1.0/).  

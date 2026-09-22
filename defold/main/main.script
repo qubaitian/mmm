@@ -2,6 +2,7 @@ local Colyseus = require 'colyseus.sdk'
 local Input = require 'main.player_input'
 local Arena = require 'main.arena'
 local CombatView = require 'main.combat_view'
+local CombatSfx = require 'main.combat_sfx'
 
 local CHARACTERS = { [0] = 'green_character', 'red_character', 'yellow_character', 'purple_character' }
 local ACTIONS = {}
@@ -81,6 +82,7 @@ local function bind_room(self, room)
 		local player = self.players[attack.playerId]
 		if not player or not self.dummy then return end
 		if not CombatView.attack(player.combat, attack, room.state.dummy.radius) then return end
+		CombatSfx.hit(sound.play)
 		CombatView.flash(self.dummy)
 		if attack.playerId == room.session_id then
 			msg.post('hud#gui', 'attack', { sequence = attack.sequence, skill = attack.skill, refreshed = attack.refreshed })

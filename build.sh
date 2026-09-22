@@ -40,13 +40,12 @@ if [ "${#java_tools[@]}" -ne 1 ] || [ "${#bob_tools[@]}" -ne 1 ]; then
 fi
 
 version=""
-if [ "$build_target" = android ]; then
-  if [ "${SKIP_VERSION_BUMP:-}" = 1 ]; then
-    version=$(python3 -c "import re, pathlib; t=pathlib.Path('$project_root/defold/game.project').read_text(); print(re.search(r'(?m)^version\\s*=\\s*(\\S+)', t).group(1))")
-  else
-    version=$(python3 "$project_root/bump_version.py" "$project_root/defold/game.project")
-  fi
+if [ "${SKIP_VERSION_BUMP:-}" = 1 ]; then
+  version=$(python3 -c "import re, pathlib; t=pathlib.Path('$project_root/defold/game.project').read_text(); print(re.search(r'(?m)^version\\s*=\\s*(\\S+)', t).group(1))")
+else
+  version=$(python3 "$project_root/bump_version.py" "$project_root/defold/game.project")
 fi
+echo "Version $version"
 
 "${java_tools[0]}" \
   -Dcom.google.protobuf.use_unsafe_pre22_gencode=true \

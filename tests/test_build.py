@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import tempfile
@@ -27,7 +28,12 @@ sys.exit(int(os.environ.get("BUILD_TEST_EXIT", "0")))
         java.chmod(0o755)
         (packages / "defold-test.jar").touch()
         self.log = self.directory / "args.json"
-        self.env = {**os.environ, "DEFOLD_APP": str(self.app), "BUILD_TEST_LOG": str(self.log)}
+        self.env = {
+            **os.environ,
+            "DEFOLD_APP": str(self.app),
+            "BUILD_TEST_LOG": str(self.log),
+            "SKIP_VERSION_BUMP": "1",
+        }
 
     def run_build(self, *args):
         return subprocess.run(["bash", str(ROOT / "build.sh"), *args], cwd=self.directory,
@@ -61,14 +67,25 @@ sys.exit(int(os.environ.get("BUILD_TEST_EXIT", "0")))
         self.assertIn("web|desktop|android", result.stderr)
         self.assertFalse(self.log.exists())
 
+    def test_web_build_bumps_the_project_version(self):
+        del self.env["SKIP_VERSION_BUMP"]
+        project = ROOT / "defold/game.project"
+        previous = project.read_text()
+        self.addCleanup(lambda: project.write_text(previous))
+        result = self.run_build("web")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotEqual(project.read_text(), previous)
+        self.assertRegex(result.stdout, r"Version \d+\.\d+\.\d+")
+
     def test_android_build_makes_an_apk(self):
-        self.env["SKIP_VERSION_BUMP"] = "1"
         android_dir = ROOT / "dist/android"
         android_dir.mkdir(parents=True, exist_ok=True)
         dummy = android_dir / "mmm.apk"
         web_dir = ROOT / "dist/web/mmm"
         web_apk = web_dir / "mmm.apk"
-        versioned = web_dir / "mmm-1.0.0.apk"
+        project_text = (ROOT / "defold/game.project").read_text()
+        version = re.search(r"(?m)^version\s*=\s*(\S+)", project_text).group(1)
+        versioned = web_dir / f"mmm-{version}.apk"
         previous = dummy.read_bytes() if dummy.exists() else None
         web_previous = web_apk.read_bytes() if web_apk.exists() else None
         versioned_previous = versioned.read_bytes() if versioned.exists() else None
