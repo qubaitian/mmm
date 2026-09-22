@@ -17,10 +17,13 @@ Build and serve the web app in another terminal:
 
 ```bash
 ./build.sh web
-python3 -m http.server 8080 --bind 0.0.0.0 --directory dist/web/mmm
+. ./.env.local
+[ -f .env ] && . ./.env
+python3 -m http.server "$WEB_PORT" --bind 0.0.0.0 --directory dist/web/mmm
 ```
 
-Open the [web app](http://192.168.110.229:8080/).  
+Open `http://$WEB_HOST:$WEB_PORT/`.  
+`.env` overrides `.env.local`.  
 Each `./build.sh` bumps the last number, like `1.0.0` to `1.0.1`.  
 
 ## Android
